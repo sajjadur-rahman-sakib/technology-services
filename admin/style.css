@@ -1,0 +1,132 @@
+*{
+    margin: 0px;
+    padding: 0px;
+    box-sizing: border-box;
+}
+body{
+    height: 100vh;
+    width: 100%;
+    font-family: "Arial", "Helvetica", sans-serif;
+}
+.container{
+  background-color: rgb(89,125,254);
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+h2{
+    text-align: center;
+    margin-bottom: 30px;
+    color:rgb(60, 87, 90);
+}
+form{
+
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 16px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(0.7px);
+    -webkit-backdrop-filter: blur(0.7px);
+    border: 1px solid rgba(255, 255, 255, 0.36);
+    height: 350px;
+    width: 450px;
+    display: flex;
+    flex-wrap: wrap;
+   justify-content: center;
+   align-items: center;
+    padding: 10px;
+    transition: 0.3s ease-in-out;
+    flex-shrink: 1;
+}
+form .signtext{
+    text-align: center;
+}
+form:hover{
+    transform: scale(1.04);
+}
+.item
+{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.item label{
+    width: 30%;
+    height: 100%;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 3;
+}
+.item input{
+    width: 70%;   
+    height: 40px;
+    border: none;
+    box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px;
+    border-radius: 10px;
+    padding: 0px 8px;
+    flex-shrink: 7;
+}
+.item label h3{
+    color: rgb(85,85,85);
+}
+.btn{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.btn input{
+   height: 35px;
+   width: 70px;
+   border-radius: 5px;
+   border: none;
+   box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+   transition: background-color 0.3s, color 0.3s;
+}
+.btn input:hover,.btnhome:hover{
+    background-color: #75c0f1;
+    color: #ffffff;
+    font-weight: bold;
+}
+.btnhome{
+    margin-bottom: 40px;
+    height: 40px;
+   width: 65px;
+   border-radius: 5px;
+   border: none;
+   background-color: #ffffff;
+   box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+   transition: background-color 0.3s, color 0.3s;
+   background-image: url('./images/home.png');
+   object-fit: cover;
+   background-size: 50%;
+   background-position: center;
+   background-repeat: no-repeat;
+}
+
+.signtext a{
+    color: #ffffff;
+}
+@media only screen and (max-width:545px)
+{
+    .form{
+        transition: 0.3s ease-in-out;
+        transform: scale(0.8) ;
+    }
+    form{
+        background: rgba(255, 255, 255, 0.08);
+        border-radius: 16px;
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(0px);
+        -webkit-backdrop-filter: blur(0px);
+        border: 1px solid rgba(255, 255, 255, 0.4);
+    }
+    .container{
+        font-weight: bold;
+    }
+}
