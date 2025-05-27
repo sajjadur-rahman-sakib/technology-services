@@ -254,12 +254,6 @@ section{
 
 /* services */
 
-.services{
-  background: url(../images/bg-2.png) no-repeat;
-  background-position: center;
-  min-height: 100vh;
-}
-
 .services .box-container{
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(25rem, 1fr));
@@ -290,80 +284,6 @@ section{
 /* services end */
 
 
-
-/* faq */
-
-.faq{
-  background: var(--light-bg);
-}
-
-.faq .accordion-container{
-  padding: 0 2rem;
-}
-
-.faq .accordion-container .accordion{
-  margin-bottom: 2rem;
-  cursor: pointer;
-}
-
-.faq .accordion-container .accordion.active .accordion-heading{
-  background: var(--secondary);
-}
-
-.faq .accordion-container .accordion.active .accordion-heading h3{
-  color: var(--white);
-}
-
-.faq .accordion-container .accordion.active .accordion-heading i{
-  color: var(--white);
-  transform: rotate(180deg);
-  transition: transform .2s .1s;
-}
-
-.faq .accordion-container .accordion.active .accordion-content{
-  display: block;
-}
-
-.faq .accordion-container .accordion .accordion-heading{
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  background: var(--white);
-  border: var(--border);
-  padding: 1.5rem 2rem;
-}
-
-.faq .accordion-container .accordion .accordion-heading h3{
-  font-size: 1.8rem;
-}
-
-.faq .accordion-container .accordion .accordion-heading i{
-  font-size: 2.5rem;
-}
-
-.faq .accordion-container .accordion .accordion-content{
-  font-size: 1.5rem;
-  padding: 1.5rem 2rem;
-  border: var(--border);
-  background: var(--white);
-  border-top: 0;
-  line-height: 2;
-  display: none;
-  animation: animate .2s linear backwards;
-  transform-origin: top;
-}
-
-@keyframes animate{
-  0%{
-    transform: scaleY(0);
-  }
-}
-
-/* faq ends*/
-
-
-
 /* reviews */
 
 .reviews{
@@ -381,8 +301,11 @@ section{
   box-shadow: var(--box-shadow);
   border-radius: .5rem;
   border: var(--border);
-  padding: 2rem;
-  margin-bottom: 4rem;
+  padding: 3.5rem 2.5rem;
+  margin-bottom: 5rem;
+  max-width: 480px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .reviews .review-slider .box img{
@@ -392,9 +315,10 @@ section{
 }
 
 .reviews .review-slider .box h3{
-  margin-top: 1rem;
-  font-size: 2rem;
+  margin-top: 1.5rem;
+  font-size: 2.6rem;
   color: var(--secondary);
+  font-weight: 600;
 }
 
 .reviews .review-slider .box span{
@@ -403,24 +327,68 @@ section{
 }
 
 .reviews .review-slider .box .stars{
-  margin: 1.5rem 0;
+  margin: 2.2rem 0 2rem 0;
+  font-size: 2.2rem;
 }
 
 .reviews .review-slider .box .stars i{
-  font-size: 1.5rem;
-  color: var(--primary);
+  font-size: 2.2rem;
 }
 
 .reviews .review-slider .box p{
-  padding: 1rem 0;
-  font-size: 1.5rem;
+  padding: 1.5rem 0 0 0;
+  font-size: 2rem;
   color: var(--light-color);
-  line-height: 2;
+  line-height: 2.1;
   margin-bottom: 0;
 }
 
 .swiper-pagination-bullet-active{
   background: var(--primary);
+}
+
+/* Make images responsive */
+img,
+iframe {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Review Form Styles */
+.review-form {
+  max-width: 420px !important;
+  margin: 2rem auto 3rem auto !important;
+  background: #f8f8f8;
+  padding: 2.2rem 1.5rem !important;
+  border-radius: 1rem !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06) !important;
+  font-size: 1.5rem;
+}
+
+.review-form h3 {
+  font-size: 2rem !important;
+  margin-bottom: 1.2rem !important;
+}
+
+.review-form input[type="text"],
+.review-form textarea {
+  font-size: 1.4rem !important;
+  padding: 0.9rem !important;
+}
+
+.review-form .star-rating {
+  font-size: 2rem !important;
+}
+
+.review-form label {
+  font-size: 1.2rem !important;
+}
+
+.review-form input[type="submit"] {
+  font-size: 1.4rem !important;
+  padding: 1rem 0 !important;
+  margin-top: 1rem !important;
 }
 
 /* reviews */
@@ -823,11 +791,4 @@ section{
     font-size: 1.2rem;
     padding: 0.7rem 1.5rem;
   }
-}
-
-/* Make images responsive */
-img, iframe {
-  max-width: 100%;
-  height: auto;
-  display: block;
 }

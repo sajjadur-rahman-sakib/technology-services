@@ -40,16 +40,6 @@ $(document).ready(function(){
 });
 
 
-let accordion = document.querySelectorAll('.accordion-container .accordion');
-
-accordion.forEach(acco =>{
-  acco.onclick = () =>{
-    accordion.forEach(subAcco => { subAcco.classList.remove('active')});
-    acco.classList.add('active');
-  }
-})
-
-
 var swiper = new Swiper(".review-slider",{
   pagination:{
     el: ".swiper-pagination",

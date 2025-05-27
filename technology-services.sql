@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 27, 2025 at 07:12 PM
+-- Generation Time: May 27, 2025 at 08:57 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -63,12 +63,38 @@ CREATE TABLE `reservation` (
 --
 
 INSERT INTO `reservation` (`id`, `name`, `address`, `phone`, `email`, `problem`, `description`, `submission_time`, `tracking`) VALUES
-(1, 'Sajjadur Rahman Sakib', 'Charfashion, Bhola', 1518652610, 'sajjadur.rahman.sakib.x@gmail.com', 'PC and Mac notebook service', 'sakib', '2024-02-07 19:41:11', 'In progress'),
-(2, 'Sajjadur Rahman Sakib', 'Charfashion, Bhola', 1518652610, 'sajjadur.rahman.sakib.x@gmail.com', 'Personal devices security', 'PSTU', '2024-02-07 19:42:11', 'Order placed'),
-(3, 'Sajjadur Rahman Sakib', 'Charfashion, Bhola', 1518652610, 'sajjadur.rahman.sakib.x@gmail.com', 'Personal devices security', 'PSTU', '2024-02-07 19:50:33', 'Delivered'),
-(4, 'Shorna Naima', 'Patuakhali', 1314638174, 'shorna@gmail.com', 'Smart Watche services', 'very big problem', '2024-02-07 19:51:44', 'Order placed'),
-(5, 'Sofiqur Rahman Babul', 'Charfashion', 1717096830, 'babul@gmail.com', 'Personal devices security', 'abcdef', '2024-02-07 19:52:17', 'Ready for delivery'),
-(6, 'Salina Akter', 'Monpura', 1728367287, 'salina@gmail.com', 'Mobile Phone services', 'abcdefgh', '2024-02-07 19:53:37', 'Delivered');
+(10, 'Sajjadur Rahman Sakib', 'Charfashion, Bhola', 1518652610, 'contact@sakib.tech', 'PC and Mac notebook service', 'Description about your problem', '2025-05-27 18:51:43', 'Delivered'),
+(11, 'Salina Akter', 'Charfashion, Bhola', 1728367287, 'sakib.info.x@gmail.com', 'Mobile Phone services', 'Description about your problem', '2025-05-27 18:52:20', 'Serviceing'),
+(12, 'Sofiqur Rahman', 'Charfashion, Bhola', 1717096830, 'sakib.x@icloud.com', 'Personal devices security', 'Description about your problem', '2025-05-27 18:52:52', 'In progress'),
+(13, 'Sofiqur Rahman', 'Charfashion, Bhola', 1717096830, 'sakib.x@icloud.com', 'Personal devices security', 'Description about your problem', '2025-05-27 18:54:45', 'Order placed');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `reviews`
+--
+
+CREATE TABLE `reviews` (
+  `id` int(11) NOT NULL,
+  `name` varchar(34) NOT NULL,
+  `stars` int(11) DEFAULT NULL CHECK (`stars` between 1 and 5),
+  `review` varchar(200) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `reviews`
+--
+
+INSERT INTO `reviews` (`id`, `name`, `stars`, `review`) VALUES
+(11, 'Sajjadur Rahman Sakib', 5, 'Very well service'),
+(12, 'Shafayet Hossain Chowdhury', 5, 'fast service'),
+(13, 'Suaib bin humayun sazid', 5, 'service is good'),
+(14, 'Abdur Rahman Riyad', 3, 'Good service'),
+(15, 'sadman samz', 2, 'slow service'),
+(16, 'suhail jaad', 4, 'faster response'),
+(17, 'suhail jaad', 4, 'faster response'),
+(18, 'suhail jaad', 4, 'faster response'),
+(19, 'suhail jaad', 4, 'faster response');
 
 --
 -- Indexes for dumped tables
@@ -87,6 +113,12 @@ ALTER TABLE `reservation`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `reviews`
+--
+ALTER TABLE `reviews`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- AUTO_INCREMENT for dumped tables
 --
 
@@ -94,7 +126,13 @@ ALTER TABLE `reservation`
 -- AUTO_INCREMENT for table `reservation`
 --
 ALTER TABLE `reservation`
-  MODIFY `id` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+
+--
+-- AUTO_INCREMENT for table `reviews`
+--
+ALTER TABLE `reviews`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

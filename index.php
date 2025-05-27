@@ -36,8 +36,9 @@
             $email = $_POST['customer_email'];
             $problem = $_POST['customer_problem'];
             $description = $_POST['customer_description'];
+            $tracking = 'Order placed';
 
-            $query = "INSERT INTO reservation (name, address, phone, email, problem, description) VALUES ('$name', '$address', '$phone', '$email', '$problem', '$description')";
+            $query = "INSERT INTO reservation (name, address, phone, email, problem, description, tracking) VALUES ('$name', '$address', '$phone', '$email', '$problem', '$description', '$tracking')";
 
             mysqli_query($connect, $query);
         }
@@ -50,6 +51,16 @@
             $query = "INSERT INTO newsletter (name, email) VALUES ('$newsletter_name', '$newsletter_mail')";
 
             mysqli_query($connect, $query);
+        }
+
+        if(isset($_POST['review_submit'])) {
+            $review_name = mysqli_real_escape_string($connect, $_POST['review_name']);
+            $review_stars = intval($_POST['review_stars']);
+            $review_text = mysqli_real_escape_string($connect, $_POST['review_text']);
+            if($review_name && $review_stars && $review_text) {
+                $query = "INSERT INTO reviews (name, stars, review) VALUES ('$review_name', $review_stars, '$review_text')";
+                mysqli_query($connect, $query);
+            }
         }
 
     ?>
@@ -69,10 +80,9 @@
             <a href="#home">home</a>
             <a href="#about">about</a>
             <a href="#services">services</a>
-            <a href="#faq">FAQs</a>
             <a href="#reviews">reviews</a>
-            <a href="#contact">booking</a>
-            <a href="./php/tracking.php">tracking</a>
+            <a href="#contact">reserve</a>
+            <a href="./php/tracking.php">track</a>
             <a href="./admin/index.php">admin</a>
 
         </nav>
@@ -118,7 +128,7 @@
                 Voluptates repudiandae, vel, repellendus nulla consectetur hic et, doloribus cum numquam explicabo temporibus culpa eos aliquam facere similique illum. Aperiam saepe eius tempore natus, ad quo consectetur sunt in laborum.
                 Iusto aliquid commodi ex necessitatibus, praesentium, officia ab modi numquam consequuntur aspernatur unde recusandae, quidem alias suscipit in aut libero incidunt quaerat ea sit saepe error sapiente. Reiciendis, earum eius!
                 Quia ad debitis officiis voluptatum recusandae consequatur! Ad ea ut in corrupti sed delectus iusto dolorem at perferendis aliquam, facilis necessitatibus explicabo vero cumque totam quas. Nihil sed accusamus magnam?</p>
-                <a href="https://sakibx.me/" class="btn">read more</a>
+                <a href="https://sakib.tech/" class="btn">read more</a>
             </div>
 
         </div>
@@ -209,153 +219,86 @@
 
 
 
-    <!-- faq -->
-
-    <section class="faq" id="faq">
-
-        <h1 class="heading"><span>questions</span> and <span>answers</span> </h1>
-
-        <div class="accordion-container">
-            
-            <div class="accordion active">
-                <div class="accordion-heading">
-                    <h3>question 01</h3>
-                    <i class="fas fa-angle-down"></i>
-                </div>
-                <p class="accordion-content">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Officiis est pariatur maxime quam provident ipsum ipsam, cumque esse, asperiores consectetur impedit laborum! Sit quibusdam reiciendis soluta facere iusto quisquam culpa?</p>
-            </div>
-
-            <div class="accordion">
-                <div class="accordion-heading">
-                    <h3>question 02</h3>
-                    <i class="fas fa-angle-down"></i>
-                </div>
-                <p class="accordion-content">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Officiis est pariatur maxime quam provident ipsum ipsam, cumque esse, asperiores consectetur impedit laborum! Sit quibusdam reiciendis soluta facere iusto quisquam culpa?</p>
-            </div>
-
-            <div class="accordion">
-                <div class="accordion-heading">
-                    <h3>question 03</h3>
-                    <i class="fas fa-angle-down"></i>
-                </div>
-                <p class="accordion-content">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Officiis est pariatur maxime quam provident ipsum ipsam, cumque esse, asperiores consectetur impedit laborum! Sit quibusdam reiciendis soluta facere iusto quisquam culpa?</p>
-            </div>
-
-
-            <div class="accordion">
-                <div class="accordion-heading">
-                    <h3>question 04</h3>
-                    <i class="fas fa-angle-down"></i>
-                </div>
-                <p class="accordion-content">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Officiis est pariatur maxime quam provident ipsum ipsam, cumque esse, asperiores consectetur impedit laborum! Sit quibusdam reiciendis soluta facere iusto quisquam culpa?</p>
-            </div>
-
-            <div class="accordion">
-                <div class="accordion-heading">
-                    <h3>question 05</h3>
-                    <i class="fas fa-angle-down"></i>
-                </div>
-                <p class="accordion-content">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Officiis est pariatur maxime quam provident ipsum ipsam, cumque esse, asperiores consectetur impedit laborum! Sit quibusdam reiciendis soluta facere iusto quisquam culpa?</p>
-            </div>
-
-            <div class="accordion">
-                <div class="accordion-heading">
-                    <h3>question 06</h3>
-                    <i class="fas fa-angle-down"></i>
-                </div>
-                <p class="accordion-content">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Officiis est pariatur maxime quam provident ipsum ipsam, cumque esse, asperiores consectetur impedit laborum! Sit quibusdam reiciendis soluta facere iusto quisquam culpa?</p>
-            </div>
-
-        </div>
-
-    </section>
-
-    <!-- faq ends-->
-
-
-
     <!-- reviews -->
 
     <section class="reviews" id="reviews">
 
         <h1 class="heading">clients <span>review</span></h1>
 
+        <!-- Review Submission Form -->
+        <form action="#reviews" method="post" class="review-form" style="max-width:400px;margin:2rem auto 3rem auto;background:#f8f8f8;padding:2rem;border-radius:1rem;box-shadow:0 2px 8px rgba(0,0,0,0.05);">
+            <h3 style="text-align:center;margin-bottom:1rem;">Leave a Review</h3>
+            <input type="text" name="review_name" placeholder="Your Name" required style="width:100%;padding:0.8rem;margin-bottom:1rem;border-radius:0.5rem;border:1px solid #ccc;">
+            <div style="margin-bottom:1rem;">
+                <label style="display:block;margin-bottom:0.5rem;">Your Rating:</label>
+                <div class="star-rating" style="font-size:2rem;cursor:pointer;">
+                    <input type="hidden" name="review_stars" id="review_stars" value="5">
+                    <span class="star" data-value="1">&#9733;</span>
+                    <span class="star" data-value="2">&#9733;</span>
+                    <span class="star" data-value="3">&#9733;</span>
+                    <span class="star" data-value="4">&#9733;</span>
+                    <span class="star" data-value="5">&#9733;</span>
+                </div>
+            </div>
+            <textarea name="review_text" placeholder="Your Review" required style="width:100%;padding:0.8rem;border-radius:0.5rem;border:1px solid #ccc;min-height:80px;margin-bottom:1rem;"></textarea>
+            <input type="submit" name="review_submit" value="Submit Review" class="btn" style="width:100%;">
+        </form>
+        <script>
+        // Star rating selection logic
+        document.addEventListener('DOMContentLoaded', function() {
+            var stars = document.querySelectorAll('.star-rating .star');
+            var input = document.getElementById('review_stars');
+            stars.forEach(function(star) {
+                star.addEventListener('click', function() {
+                    var val = this.getAttribute('data-value');
+                    input.value = val;
+                    stars.forEach(function(s, idx) {
+                        if(idx < val) s.style.color = '#fbc02d';
+                        else s.style.color = '#ccc';
+                    });
+                });
+            });
+            stars.forEach(function(s, idx) {
+                if(idx < input.value) s.style.color = '#fbc02d';
+                else s.style.color = '#ccc';
+            });
+        });
+        </script>
+        <!-- End Review Submission Form -->
+
         <div class="swiper review-slider">
 
             <div class="swiper-wrapper">
-
-                <div class="swiper-slide box">
-                    <img src="images/review-1.jpg" alt="">
-                    <h3>sajjadur rahman sakib</h3>
-                    <span>satisfied client</span>
-                    <div class="stars">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                    </div>
-                    <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Assumenda beatae non explicabo temporibus at doloribus ut quas, iusto consectetur maxime accusantium dicta sed harum tempore quae nemo nam itaque error?</p>
-                </div>
-
-                <div class="swiper-slide box">
-                    <img src="images/review-2.jpg" alt="">
-                    <h3>abdur rahman riyad</h3>
-                    <span>satisfied client</span>
-                    <div class="stars">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                    </div>
-                    <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Assumenda beatae non explicabo temporibus at doloribus ut quas, iusto consectetur maxime accusantium dicta sed harum tempore quae nemo nam itaque error?</p>
-                </div>
-
-                <div class="swiper-slide box">
-                    <img src="images/review-3.jpg" alt="">
-                    <h3>suaib bin sajid</h3>
-                    <span>satisfied client</span>
-                    <div class="stars">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                    </div>
-                    <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Assumenda beatae non explicabo temporibus at doloribus ut quas, iusto consectetur maxime accusantium dicta sed harum tempore quae nemo nam itaque error?</p>
-                </div>
-
-                <div class="swiper-slide box">
-                    <img src="images/review-4.jpg" alt="">
-                    <h3>shafayat chowdhury</h3>
-                    <span>satisfied client</span>
-                    <div class="stars">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                    </div>
-                    <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Assumenda beatae non explicabo temporibus at doloribus ut quas, iusto consectetur maxime accusantium dicta sed harum tempore quae nemo nam itaque error?</p>
-                </div>
-
-                <div class="swiper-slide box">
-                    <img src="images/review-5.jpg" alt="">
-                    <h3>alamin al shahria</h3>
-                    <span>satisfied client</span>
-                    <div class="stars">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                    </div>
-                    <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Assumenda beatae non explicabo temporibus at doloribus ut quas, iusto consectetur maxime accusantium dicta sed harum tempore quae nemo nam itaque error?</p>
-                </div>
+                <!-- Load reviews from database -->
+                <?php
+                $shown_reviews = array();
+                $result = mysqli_query($connect, "SELECT * FROM reviews ORDER BY id DESC LIMIT 30");
+                while($row = mysqli_fetch_assoc($result)) {
+                    $review_key = md5(strtolower(trim($row['name'])) . '|' . strtolower(trim($row['review'])));
+                    if (!isset($shown_reviews[$review_key])) {
+                        $shown_reviews[$review_key] = 1;
+                    } else {
+                        $shown_reviews[$review_key]++;
+                    }
+                    if ($shown_reviews[$review_key] > 2) continue;
+                    $stars = intval($row['stars']);
+                    echo '<div class="swiper-slide box">';
+                    echo '<h3>' . htmlspecialchars($row['name']) . '</h3>';
+                    echo '<div class="stars">';
+                    for($i=1;$i<=5;$i++) {
+                        if($i <= $stars) {
+                            echo '<i class="fas fa-star" style="color:#fbc02d;"></i>';
+                        } else {
+                            echo '<i class="fas fa-star" style="color:#ccc;"></i>';
+                        }
+                    }
+                    echo '</div>';
+                    echo '<p>' . nl2br(htmlspecialchars($row['review'])) . '</p>';
+                    echo '</div>';
+                }
+                ?>
 
             </div>
-
             <div class="swiper-pagination"></div>
 
         </div>
@@ -423,10 +366,10 @@
                 <h3> <i class="fas fa-gear"></i> Sakib IT Services </h3>
                 <p>sakib it services is a it based services company. We provide authentic product and qualityful services.</p>
                 <div class="share">
-                    <a href="#" class="fab fa-facebook-f"></a>
-                    <a href="#" class="fab fa-twitter"></a>
-                    <a href="#" class="fab fa-linkedin"></a>
-                    <a href="#" class="fab fa-instagram"></a>
+                    <a href="https://www.facebook.com/sajjadur.rahman.sakib.x" class="fab fa-facebook-f"></a>
+                    <a href="https://github.com/sajjadur-rahman-sakib" class="fab fa-github"></a>
+                    <a href="https://www.linkedin.com/in/sajjadurrahmansakib/" class="fab fa-linkedin"></a>
+                    <a href="https://www.instagram.com/sakib.x/" class="fab fa-instagram"></a>
                 </div>
             </div>
 
