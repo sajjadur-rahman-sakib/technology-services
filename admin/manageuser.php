@@ -24,6 +24,16 @@ if (isset($_POST['deletebtn'])) {
     mysqli_query($conn, $sql);
 }
 
+// Handle tracking update
+if (isset($_POST['updatetrackingbtn'])) {
+    $trackingId = $_POST['trackingId'];
+    $trackingValue = mysqli_real_escape_string($conn, $_POST['trackingValue']);
+    $sql = "UPDATE reservation SET tracking = '$trackingValue' WHERE id = $trackingId";
+    mysqli_query($conn, $sql);
+    // Optional: reload to show updated value
+    echo "<meta http-equiv='refresh' content='0'>";
+}
+
 ?>
 
 
@@ -56,6 +66,7 @@ if (isset($_POST['deletebtn'])) {
                         <th>Email</th>
                         <th>Address</th>
                         <th>Problem</th>
+                        <th>Tracking</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -77,6 +88,21 @@ if (isset($_POST['deletebtn'])) {
                         <td>'.$row['email'].'</td>
                         <td>'.$row['address'].'</td>
                         <td>'.$row['problem'].'</td>
+                        <td>
+                            <form method="post" action="" style="display:inline;">
+                                <input type="hidden" name="trackingId" value="'.$row['id'].'">
+                                <select name="trackingValue" style="width:130px;">
+                                    <option value="Order placed"'.($row['tracking']==='Order placed'?' selected':'').'>Order placed</option>
+                                    <option value="In progress"'.($row['tracking']==='In progress'?' selected':'').'>In progress</option>
+                                    <option value="Serviceing"'.($row['tracking']==='Serviceing'?' selected':'').'>Serviceing</option>
+                                    <option value="Service complete"'.($row['tracking']==='Service complete'?' selected':'').'>Service complete</option>
+                                    <option value="Ready for delivery"'.($row['tracking']==='Ready for delivery'?' selected':'').'>Ready for delivery</option>
+                                    <option value="Delivered"'.($row['tracking']==='Delivered'?' selected':'').'>Delivered</option>
+                                    
+                                </select>
+                                <button type="submit" name="updatetrackingbtn" style="background-color: #28a745; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">Update</button>
+                            </form>
+                        </td>
                         <td class="actions">
                                 <form method="post" action="">
                                     <input type="hidden" name="selectedId" value="'.$row['id'].'">

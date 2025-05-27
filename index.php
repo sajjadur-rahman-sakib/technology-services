@@ -71,7 +71,9 @@
             <a href="#services">services</a>
             <a href="#faq">FAQs</a>
             <a href="#reviews">reviews</a>
-            <a href="#contact">contact</a>
+            <a href="#contact">booking</a>
+            <a href="./php/tracking.php">tracking</a>
+            <a href="./admin/index.php">admin</a>
 
         </nav>
 
