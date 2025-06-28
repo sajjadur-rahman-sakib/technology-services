@@ -17,6 +17,64 @@
     <link rel="stylesheet" href="https://unpkg.com/swiper@7/swiper-bundle.min.css" />
 
     <link rel="stylesheet" href="css/style.css">
+    
+    <!-- Payment Section Custom Styles -->
+    <style>
+        #payment-section {
+            animation: slideIn 0.5s ease-in-out;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        #proceed-payment-btn:hover {
+            background: #45a049 !important;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        #skip-payment-btn:hover {
+            background: #5a6268 !important;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .payment-info-row {
+            padding: 8px 0;
+            border-bottom: 1px dotted #ccc;
+            margin-bottom: 8px;
+        }
+        
+        .payment-info-row:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+        
+        #service-amount {
+            font-weight: bold;
+            color: #2e7d32;
+            font-size: 1.2em;
+        }
+        
+        .secure-badge {
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            display: inline-block;
+            margin-top: 10px;
+        }
+    </style>
 
 </head>
 
@@ -111,11 +169,19 @@
             </div>
 
             <div class="content">
-                <h3>Lorem ipsum dolor sit amet consectetur adipisicing elit</h3>
-                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptates consequuntur, dolorem, delectus dolorum maxime id dicta soluta vel in totam eos velit expedita similique et provident? Illum quam vel ipsam.
-                Voluptates repudiandae, vel, repellendus nulla consectetur hic et, doloribus cum numquam explicabo temporibus culpa eos aliquam facere similique illum. Aperiam saepe eius tempore natus, ad quo consectetur sunt in laborum.
-                Iusto aliquid commodi ex necessitatibus, praesentium, officia ab modi numquam consequuntur aspernatur unde recusandae, quidem alias suscipit in aut libero incidunt quaerat ea sit saepe error sapiente. Reiciendis, earum eius!
-                Quia ad debitis officiis voluptatum recusandae consequatur! Ad ea ut in corrupti sed delectus iusto dolorem at perferendis aliquam, facilis necessitatibus explicabo vero cumque totam quas. Nihil sed accusamus magnam?</p>
+                <h3>Sakib IT Services</h3>
+                <p>
+                Sakib IT Services is a dynamic technology company offering reliable digital solutions.
+                We specialize in software development, mobile app development, and web design.
+                Our mission is to empower businesses with modern and affordable IT services.
+                We deliver customized solutions tailored to your business goals.
+                From small startups to large enterprises, we support all types of clients.
+                We ensure high-quality service, timely delivery, and client satisfaction.
+                Our expert team is skilled in Flutter, PHP, MySQL, Firebase, and more.
+                We also offer IT consulting and system integration support.
+                Customer success is our top priority, driving us to innovate constantly.
+                Partner with Sakib IT Services — your trusted IT partner for growth.
+                </p>
                 <a href="https://sakib.tech/" class="btn">read more</a>
             </div>
 
@@ -335,6 +401,9 @@
                 <!-- OTP Section (initially hidden) -->
                 <div id="otp-section" style="display: none; margin: 1rem 0; padding: 1rem; background: #f8f8f8; border-radius: 0.5rem;">
                     <p style="color: #28a745; margin-bottom: 1rem;">OTP has been sent to your email. Please enter it below:</p>
+                    <div id="timer-display" style="text-align: center; margin-bottom: 1rem; padding: 0.5rem; background: #fff3cd; border-radius: 0.3rem; color: #856404; font-weight: bold;">
+                        Time remaining: <span id="countdown-timer">05:00</span>
+                    </div>
                     <input type="text" id="otp-input" placeholder="Enter 6-digit OTP" maxlength="6" style="width: 100%; padding: 0.8rem; border: 1px solid #ccc; border-radius: 0.5rem; text-align: center; font-size: 1.2rem; letter-spacing: 2px;">
                     <div style="margin-top: 1rem;">
                         <button type="button" id="verify-otp-btn" class="btn" style="margin-right: 1rem;">Verify OTP</button>
@@ -344,7 +413,7 @@
 
                 <div id="form-messages" style="margin: 1rem 0; padding: 0.5rem; border-radius: 0.5rem; display: none;"></div>
 
-                <button type="button" id="send-otp-btn" class="btn">Send OTP</button>
+                <button type="button" id="send-otp-btn" class="btn">Confirm</button>
 
             </form>
 
@@ -406,6 +475,109 @@
     $(document).ready(function() {
         let currentEmail = '';
         let formDataCache = null; // Store form data for resend
+        let otpTimer = null; // Timer variable
+        let timeLeft = 300; // 5 minutes in seconds
+        
+        // Timer function
+        function startOTPTimer() {
+            timeLeft = 300; // Reset to 5 minutes
+            updateTimerDisplay();
+            
+            otpTimer = setInterval(function() {
+                timeLeft--;
+                updateTimerDisplay();
+                
+                if (timeLeft <= 0) {
+                    clearInterval(otpTimer);
+                    autoResendOTP();
+                }
+            }, 1000);
+        }
+        
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            const display = String(minutes).padStart(2, '0') + ':' + String(seconds).padStart(2, '0');
+            $('#countdown-timer').text(display);
+            
+            // Change color as time runs out
+            const timerElement = $('#timer-display');
+            if (timeLeft <= 60) {
+                timerElement.css({
+                    'background': '#f8d7da',
+                    'color': '#721c24',
+                    'border': '1px solid #f5c6cb'
+                });
+            } else if (timeLeft <= 120) {
+                timerElement.css({
+                    'background': '#fff3cd',
+                    'color': '#856404',
+                    'border': '1px solid #ffeaa7'
+                });
+            }
+        }
+        
+        function stopOTPTimer() {
+            if (otpTimer) {
+                clearInterval(otpTimer);
+                otpTimer = null;
+            }
+        }
+        
+        function autoResendOTP() {
+            if (!formDataCache) {
+                showMessage('Timer expired. Please refresh the page and try again.', 'error');
+                return;
+            }
+            
+            showMessage('⏰ Timer expired! Automatically resending OTP...', 'info');
+            
+            // Create new FormData from cached data and add send_otp flag
+            const resendFormData = new FormData();
+            for (let [key, value] of formDataCache.entries()) {
+                resendFormData.append(key, value);
+            }
+            resendFormData.append('send_otp', '1');
+            
+            $.ajax({
+                url: 'otp/otp_handler.php',
+                type: 'POST',
+                data: resendFormData,
+                processData: false,
+                contentType: false,
+                dataType: 'json',
+                success: function(response) {
+                    if (response.status === 'success') {
+                        showMessage('🔄 New OTP sent successfully! Check your email.', 'success');
+                        $('#otp-input').val('');
+                        startOTPTimer(); // Restart timer
+                    } else {
+                        showMessage('Failed to resend OTP: ' + response.message, 'error');
+                    }
+                },
+                error: function() {
+                    showMessage('Failed to auto-resend OTP. Please try manually.', 'error');
+                }
+            });
+        }
+        
+        // Check for payment status messages in URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const paymentStatus = urlParams.get('payment');
+        const message = urlParams.get('message');
+        
+        if (paymentStatus) {
+            if (paymentStatus === 'success') {
+                showMessage('🎉 Payment successful! Your service has been confirmed.', 'success');
+            } else if (paymentStatus === 'error') {
+                showMessage('❌ Payment failed: ' + (message || 'Please try again'), 'error');
+            }
+            
+            // Clean URL after showing message
+            setTimeout(function() {
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }, 5000);
+        }
         
         // Send OTP
         $('#send-otp-btn').click(function() {
@@ -436,6 +608,7 @@
                         $('#otp-section').show();
                         $('#send-otp-btn').hide();
                         showMessage(response.message, 'success');
+                        startOTPTimer(); // Start the countdown timer
                         // Disable form fields
                         $('#reservation-form input, #reservation-form select, #reservation-form textarea').not('#otp-input').prop('disabled', true);
                     } else {
@@ -446,7 +619,7 @@
                     showMessage('Failed to send OTP. Please try again.', 'error');
                 },
                 complete: function() {
-                    $('#send-otp-btn').prop('disabled', false).text('Send OTP');
+                    $('#send-otp-btn').prop('disabled', false).text('Confirm');
                 }
             });
         });
@@ -473,14 +646,24 @@
                 success: function(response) {
                     if (response.status === 'success') {
                         showMessage(response.message, 'success');
-                        // Reset form after successful submission
-                        setTimeout(function() {
-                            $('#reservation-form')[0].reset();
-                            $('#otp-section').hide();
-                            $('#send-otp-btn').show();
-                            $('#reservation-form input, #reservation-form select, #reservation-form textarea').prop('disabled', false);
-                            $('#form-messages').hide();
-                        }, 3000);
+                        stopOTPTimer(); // Stop timer on successful verification
+                        
+                        // If reservation was successful, show payment option
+                        if (response.reservation_id && response.service_type) {
+                            // Add a small celebration before showing payment
+                            setTimeout(function() {
+                                showMessage('🎉 Reservation confirmed! Please proceed with payment.', 'success');
+                            }, 1000);
+                            
+                            setTimeout(function() {
+                                showPaymentOption(response.reservation_id, response.service_type);
+                            }, 2500);
+                        } else {
+                            // Reset form after successful submission (no payment)
+                            setTimeout(function() {
+                                resetForm();
+                            }, 3000);
+                        }
                     } else {
                         showMessage(response.message, 'error');
                     }
@@ -522,6 +705,7 @@
                     if (response.status === 'success') {
                         showMessage('OTP resent successfully', 'success');
                         $('#otp-input').val('');
+                        startOTPTimer(); // Restart timer on manual resend
                     } else {
                         showMessage(response.message, 'error');
                     }
@@ -544,7 +728,7 @@
         // Show message function
         function showMessage(message, type) {
             const messageDiv = $('#form-messages');
-            messageDiv.removeClass('success error').addClass(type);
+            messageDiv.removeClass('success error info').addClass(type);
             messageDiv.text(message).show();
             
             if (type === 'success') {
@@ -553,6 +737,12 @@
                     'color': '#155724',
                     'border': '1px solid #c3e6cb'
                 });
+            } else if (type === 'info') {
+                messageDiv.css({
+                    'background': '#d1ecf1',
+                    'color': '#0c5460',
+                    'border': '1px solid #bee5eb'
+                });
             } else {
                 messageDiv.css({
                     'background': '#f8d7da',
@@ -560,6 +750,142 @@
                     'border': '1px solid #f5c6cb'
                 });
             }
+        }
+        
+        // Show payment option
+        function showPaymentOption(reservationId, serviceType) {
+            const paymentHtml = `
+                <div id="payment-section" style="margin: 2rem 0; padding: 2rem; background: #e8f5e8; border-radius: 0.5rem; border: 2px solid #4CAF50;">
+                    <h3 style="text-align: center; color: #2e7d32; margin-bottom: 1.5rem;">
+                        <i class="fas fa-credit-card"></i> Complete Your Payment
+                    </h3>
+                    <p style="text-align: center; margin-bottom: 1.5rem; color: #2e7d32;">
+                        Your reservation has been confirmed! Please complete the payment to finalize your service booking.
+                    </p>
+                    <div style="text-align: center; margin-bottom: 1.5rem;">
+                        <div class="payment-info-row">
+                            <strong>Service:</strong> ${serviceType}
+                        </div>
+                        <div class="payment-info-row">
+                            <strong>Reservation ID:</strong> #${reservationId}
+                        </div>
+                        <div class="payment-info-row">
+                            <strong>Amount:</strong> <span id="service-amount">Loading...</span> BDT
+                        </div>
+                    </div>
+                    <div id="payment-loading" style="text-align: center; display: none; margin-bottom: 1rem;">
+                        <i class="fas fa-spinner fa-spin"></i> Processing payment...
+                    </div>
+                    <div style="text-align: center;">
+                        <button type="button" id="proceed-payment-btn" class="btn" style="background: #4CAF50; margin-right: 1rem;">
+                            <i class="fas fa-credit-card"></i> Pay Now
+                        </button>
+                        <button type="button" id="skip-payment-btn" class="btn" style="background: #6c757d;">
+                            <i class="fas fa-clock"></i> Pay Later
+                        </button>
+                    </div>
+                    <div style="text-align: center; margin-top: 1rem; font-size: 0.9rem; color: #666;">
+                        <span class="secure-badge">
+                            <i class="fas fa-shield-alt"></i> Secured by SSLCommerz
+                        </span>
+                    </div>
+                </div>
+            `;
+            
+            $('#form-messages').after(paymentHtml);
+            
+            // Get service amount from server (dynamically)
+            $.ajax({
+                url: 'payment/get_fee.php',
+                type: 'GET',
+                data: { service: serviceType },
+                dataType: 'json',
+                success: function(feeResponse) {
+                    if (feeResponse.status === 'success') {
+                        $('#service-amount').text(feeResponse.amount);
+                    } else {
+                        $('#service-amount').text('500'); // Default fallback
+                    }
+                },
+                error: function() {
+                    // Fallback to hardcoded fees
+                    const serviceFees = {
+                        'Mobile Phone services': 1000,
+                        'PC and Mac notebook service': 1500,
+                        'Personal devices security': 800,
+                        'Data Management service': 1200,
+                        'Smart Watche services': 600,
+                        'Digital Cameras services': 1000
+                    };
+                    const amount = serviceFees[serviceType] || 500;
+                    $('#service-amount').text(amount);
+                }
+            });
+            
+            // Payment button click
+            $('#proceed-payment-btn').click(function() {
+                const $btn = $(this);
+                const originalText = $btn.html();
+                
+                $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Processing...');
+                $('#payment-loading').show();
+                
+                $.ajax({
+                    url: 'payment/initiate.php',
+                    type: 'POST',
+                    data: {
+                        reservation_id: reservationId,
+                        service_type: serviceType
+                    },
+                    dataType: 'json',
+                    timeout: 30000, // 30 second timeout
+                    success: function(response) {
+                        if (response.status === 'success') {
+                            showMessage('Redirecting to payment gateway...', 'success');
+                            // Small delay before redirect for better UX
+                            setTimeout(function() {
+                                window.location.href = response.payment_url;
+                            }, 1500);
+                        } else {
+                            showMessage('Payment initialization failed: ' + response.message, 'error');
+                            $btn.prop('disabled', false).html(originalText);
+                            $('#payment-loading').hide();
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        let errorMessage = 'Failed to initiate payment. Please try again.';
+                        if (status === 'timeout') {
+                            errorMessage = 'Request timeout. Please check your connection and try again.';
+                        }
+                        showMessage(errorMessage, 'error');
+                        $btn.prop('disabled', false).html(originalText);
+                        $('#payment-loading').hide();
+                    }
+                });
+            });
+            
+            // Skip payment button
+            $('#skip-payment-btn').click(function() {
+                showMessage('You can complete the payment later from your tracking page. Your reservation is confirmed.', 'success');
+                setTimeout(function() {
+                    resetForm();
+                    // Scroll to top or show tracking link
+                    $('html, body').animate({
+                        scrollTop: $('#home').offset().top
+                    }, 1000);
+                }, 3000);
+            });
+        }
+        
+        // Reset form function
+        function resetForm() {
+            $('#reservation-form')[0].reset();
+            $('#otp-section').hide();
+            $('#payment-section').remove();
+            $('#send-otp-btn').show();
+            $('#reservation-form input, #reservation-form select, #reservation-form textarea').prop('disabled', false);
+            $('#form-messages').hide();
+            stopOTPTimer(); // Stop timer when resetting form
         }
     });
     </script>

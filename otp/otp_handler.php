@@ -209,15 +209,23 @@ if(isset($_POST['verify_otp'])) {
         $temp_data = mysqli_fetch_assoc($result);
         
         // Move data to main reservations table
-        $tracking = 'Order placed';
-        $insert_query = "INSERT INTO reservation (name, address, phone, email, problem, description, tracking) 
+        $tracking = 'Order placed - Pending Payment';
+        $insert_query = "INSERT INTO reservation (name, address, phone, email, problem, description, tracking, payment_status) 
                         VALUES ('{$temp_data['name']}', '{$temp_data['address']}', '{$temp_data['phone']}', 
-                               '{$temp_data['email']}', '{$temp_data['problem']}', '{$temp_data['description']}', '$tracking')";
+                               '{$temp_data['email']}', '{$temp_data['problem']}', '{$temp_data['description']}', '$tracking', 'PENDING')";
         
         if(mysqli_query($connect, $insert_query)) {
+            $reservation_id = mysqli_insert_id($connect);
+            
             // Delete temporary data
             mysqli_query($connect, "DELETE FROM temporary WHERE email = '$email'");
-            echo json_encode(['status' => 'success', 'message' => 'Reservation confirmed successfully!']);
+            
+            echo json_encode([
+                'status' => 'success', 
+                'message' => 'Reservation confirmed! Please proceed to payment.',
+                'reservation_id' => $reservation_id,
+                'service_type' => $temp_data['problem']
+            ]);
         } else {
             echo json_encode(['status' => 'error', 'message' => 'Failed to save reservation']);
         }

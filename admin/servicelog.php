@@ -26,6 +26,42 @@ if (isset($_POST['submit'])){
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Service Log</title>
     <link rel="stylesheet" href="servicelog.css">
+    <style>
+        /* Payment Status Styles */
+        .payment-status {
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: uppercase;
+            display: inline-block;
+            margin-left: 5px;
+        }
+        
+        .status-paid {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .status-pending {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        
+        .status-failed {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .status-unpaid {
+            background-color: #e2e3e5;
+            color: #383d41;
+            border: 1px solid #d6d8db;
+        }
+    </style>
 </head>
 <body>
     <div class="contaner">
@@ -53,11 +89,39 @@ if (isset($_POST['submit'])){
                     <?php
 
                         include 'config.php';
-                        $sql = "SELECT * FROM reservation";
+                        
+                        // Updated query to include payment information
+                        $sql = "SELECT r.*, p.transaction_id, p.amount, p.currency, p.status as payment_status, p.created_at as payment_date
+                                FROM reservation r 
+                                LEFT JOIN payments p ON r.id = p.reservation_id 
+                                ORDER BY r.id DESC";
 
                         $result = mysqli_query($conn, $sql);
                         $no = 1;
                         while ($row = mysqli_fetch_assoc($result)) {
+                        
+                            // Determine payment status display
+                            $payment_status = $row['payment_status'] ? $row['payment_status'] : 'Not Paid';
+                            $amount = $row['amount'] ? '$' . number_format($row['amount'], 2) : 'N/A';
+                            
+                            // Set status class for styling
+                            $status_class = '';
+                            switch (strtolower($payment_status)) {
+                                case 'paid':
+                                case 'completed':
+                                case 'success':
+                                    $status_class = 'status-paid';
+                                    break;
+                                case 'pending':
+                                    $status_class = 'status-pending';
+                                    break;
+                                case 'failed':
+                                case 'cancelled':
+                                    $status_class = 'status-failed';
+                                    break;
+                                default:
+                                    $status_class = 'status-unpaid';
+                            }
                         
                             echo '<tr>
                             <td>' . $no . '</td>
@@ -67,7 +131,17 @@ if (isset($_POST['submit'])){
                                 Phone: <span style="color: blue;"> ' . $row['phone'] . '</span> 
                                 Email: <span style="color: blue;"> ' . $row['email'] . '</span> 
                                 Problem: <span style="color: blue;"> ' . $row['problem'] . '</span> requested a service.
-                                </p>
+                                <br><strong>Payment Status:</strong> <span class="payment-status '.$status_class.'">'.htmlspecialchars($payment_status).'</span>';
+                                
+                            if ($row['amount']) {
+                                echo ' <strong>Amount:</strong> <span style="color: green; font-weight: bold;">'.$amount.'</span>';
+                            }
+                            
+                            if ($row['transaction_id']) {
+                                echo ' <strong>Transaction ID:</strong> <span style="color: #007bff;">'.$row['transaction_id'].'</span>';
+                            }
+                            
+                            echo '</p>
                             </td>
                             <td>' . $row['submission_time'] . '</td>
                         </tr>';
@@ -97,7 +171,5 @@ if (isset($_POST['submit'])){
         </div>
     </div>
     
-    
-
 </body>
 </html>

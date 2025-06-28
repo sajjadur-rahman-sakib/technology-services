@@ -14,7 +14,7 @@ define('SMTP_FROM_NAME', 'Sakib IT Services');
 
 // OTP Settings
 define('OTP_LENGTH', 6);
-define('OTP_EXPIRY_MINUTES', 10);
+define('OTP_EXPIRY_MINUTES', 5);
 
 // Email settings
 define('ENABLE_EMAIL_LOGGING', true); // Set to false in production
