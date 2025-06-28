@@ -28,20 +28,8 @@
 
         include "./php/config.php";
 
-        if(isset($_POST['submit']))
-        {
-            $name = $_POST['customer_name'];
-            $address = $_POST['customer_address'];
-            $phone = $_POST['customer_mobile'];
-            $email = $_POST['customer_email'];
-            $problem = $_POST['customer_problem'];
-            $description = $_POST['customer_description'];
-            $tracking = 'Order placed';
-
-            $query = "INSERT INTO reservation (name, address, phone, email, problem, description, tracking) VALUES ('$name', '$address', '$phone', '$email', '$problem', '$description', '$tracking')";
-
-            mysqli_query($connect, $query);
-        }
+        // OTP verification is now handled via AJAX in otp_handler.php
+        // No direct form submission to database
 
         if(isset($_POST['subscribe']))
         {
@@ -321,16 +309,16 @@
                 <img src="images/Service 24_7.gif" alt="">
             </div>
 
-            <form action="" method="post">
+            <form id="reservation-form" method="post">
 
                 <div class="message">
 
-                    <input type="text" name="customer_name" placeholder="Name">
-                    <input type="text" name="customer_address" placeholder="Address">
-                    <input type="number" name="customer_mobile" placeholder="Phone +880">
-                    <input type="text" name="customer_email" placeholder="Email">
+                    <input type="text" name="customer_name" placeholder="Name" required>
+                    <input type="text" name="customer_address" placeholder="Address" required>
+                    <input type="number" name="customer_mobile" placeholder="Phone +880" required>
+                    <input type="email" name="customer_email" placeholder="Email" required>
 
-                    <select name="customer_problem" id="prob">
+                    <select name="customer_problem" id="prob" required>
                         <option value="">Select your problem</option>
                         <option value="Mobile Phone services">Mobile Phone services</option>
                         <option value="PC and Mac notebook service">PC and Mac notebook service</option>
@@ -342,9 +330,21 @@
                     
                 </div>
 
-                <textarea name="customer_description" placeholder="Description about your problems" id="" cols="30" rows="10"></textarea>
+                <textarea name="customer_description" placeholder="Description about your problems" cols="30" rows="10" required></textarea>
 
-                <input name="submit" type="submit" value="Submit" class="btn">
+                <!-- OTP Section (initially hidden) -->
+                <div id="otp-section" style="display: none; margin: 1rem 0; padding: 1rem; background: #f8f8f8; border-radius: 0.5rem;">
+                    <p style="color: #28a745; margin-bottom: 1rem;">OTP has been sent to your email. Please enter it below:</p>
+                    <input type="text" id="otp-input" placeholder="Enter 6-digit OTP" maxlength="6" style="width: 100%; padding: 0.8rem; border: 1px solid #ccc; border-radius: 0.5rem; text-align: center; font-size: 1.2rem; letter-spacing: 2px;">
+                    <div style="margin-top: 1rem;">
+                        <button type="button" id="verify-otp-btn" class="btn" style="margin-right: 1rem;">Verify OTP</button>
+                        <button type="button" id="resend-otp-btn" class="btn" style="background: #6c757d;">Resend OTP</button>
+                    </div>
+                </div>
+
+                <div id="form-messages" style="margin: 1rem 0; padding: 0.5rem; border-radius: 0.5rem; display: none;"></div>
+
+                <button type="button" id="send-otp-btn" class="btn">Send OTP</button>
 
             </form>
 
@@ -400,6 +400,169 @@
     <!-- swiper js link  -->
     <script src="https://unpkg.com/swiper@7/swiper-bundle.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    <!-- OTP Functionality JavaScript -->
+    <script>
+    $(document).ready(function() {
+        let currentEmail = '';
+        let formDataCache = null; // Store form data for resend
+        
+        // Send OTP
+        $('#send-otp-btn').click(function() {
+            const form = $('#reservation-form')[0];
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+            
+            const formData = new FormData(form);
+            formData.append('send_otp', '1');
+            currentEmail = formData.get('customer_email');
+            
+            // Cache the form data for resend functionality
+            formDataCache = new FormData(form);
+            
+            $(this).prop('disabled', true).text('Sending OTP...');
+            
+            $.ajax({
+                url: 'otp/otp_handler.php',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                dataType: 'json',
+                success: function(response) {
+                    if (response.status === 'success') {
+                        $('#otp-section').show();
+                        $('#send-otp-btn').hide();
+                        showMessage(response.message, 'success');
+                        // Disable form fields
+                        $('#reservation-form input, #reservation-form select, #reservation-form textarea').not('#otp-input').prop('disabled', true);
+                    } else {
+                        showMessage(response.message, 'error');
+                    }
+                },
+                error: function() {
+                    showMessage('Failed to send OTP. Please try again.', 'error');
+                },
+                complete: function() {
+                    $('#send-otp-btn').prop('disabled', false).text('Send OTP');
+                }
+            });
+        });
+        
+        // Verify OTP
+        $('#verify-otp-btn').click(function() {
+            const otp = $('#otp-input').val().trim();
+            if (otp.length !== 6) {
+                showMessage('Please enter a valid 6-digit OTP', 'error');
+                return;
+            }
+            
+            $(this).prop('disabled', true).text('Verifying...');
+            
+            $.ajax({
+                url: 'otp/otp_handler.php',
+                type: 'POST',
+                data: {
+                    verify_otp: '1',
+                    customer_email: currentEmail,
+                    otp: otp
+                },
+                dataType: 'json',
+                success: function(response) {
+                    if (response.status === 'success') {
+                        showMessage(response.message, 'success');
+                        // Reset form after successful submission
+                        setTimeout(function() {
+                            $('#reservation-form')[0].reset();
+                            $('#otp-section').hide();
+                            $('#send-otp-btn').show();
+                            $('#reservation-form input, #reservation-form select, #reservation-form textarea').prop('disabled', false);
+                            $('#form-messages').hide();
+                        }, 3000);
+                    } else {
+                        showMessage(response.message, 'error');
+                    }
+                },
+                error: function() {
+                    showMessage('Verification failed. Please try again.', 'error');
+                },
+                complete: function() {
+                    $('#verify-otp-btn').prop('disabled', false).text('Verify OTP');
+                }
+            });
+        });
+        
+        // Resend OTP
+        $('#resend-otp-btn').click(function() {
+            // Check if we have cached form data
+            if (!formDataCache) {
+                showMessage('Error: No form data available. Please refresh and try again.', 'error');
+                return;
+            }
+            
+            // Create new FormData from cached data and add send_otp flag
+            const resendFormData = new FormData();
+            for (let [key, value] of formDataCache.entries()) {
+                resendFormData.append(key, value);
+            }
+            resendFormData.append('send_otp', '1');
+            
+            $(this).prop('disabled', true).text('Resending...');
+            
+            $.ajax({
+                url: 'otp/otp_handler.php',
+                type: 'POST',
+                data: resendFormData,
+                processData: false,
+                contentType: false,
+                dataType: 'json',
+                success: function(response) {
+                    if (response.status === 'success') {
+                        showMessage('OTP resent successfully', 'success');
+                        $('#otp-input').val('');
+                    } else {
+                        showMessage(response.message, 'error');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.log('Resend error details:', {xhr: xhr, status: status, error: error});
+                    showMessage('Failed to resend OTP. Please try again.', 'error');
+                },
+                complete: function() {
+                    $('#resend-otp-btn').prop('disabled', false).text('Resend OTP');
+                }
+            });
+        });
+        
+        // Auto-format OTP input
+        $('#otp-input').on('input', function() {
+            this.value = this.value.replace(/[^0-9]/g, '');
+        });
+        
+        // Show message function
+        function showMessage(message, type) {
+            const messageDiv = $('#form-messages');
+            messageDiv.removeClass('success error').addClass(type);
+            messageDiv.text(message).show();
+            
+            if (type === 'success') {
+                messageDiv.css({
+                    'background': '#d4edda',
+                    'color': '#155724',
+                    'border': '1px solid #c3e6cb'
+                });
+            } else {
+                messageDiv.css({
+                    'background': '#f8d7da',
+                    'color': '#721c24',
+                    'border': '1px solid #f5c6cb'
+                });
+            }
+        }
+    });
+    </script>
 
     <!-- custom js file link  -->
     <script src="js/script.js"></script>
