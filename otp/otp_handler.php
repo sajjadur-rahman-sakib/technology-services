@@ -209,7 +209,7 @@ if(isset($_POST['verify_otp'])) {
         $temp_data = mysqli_fetch_assoc($result);
         
         // Move data to main reservations table
-        $tracking = 'Order placed - Pending Payment';
+        $tracking = 'Order placed';
         $insert_query = "INSERT INTO reservation (name, address, phone, email, problem, description, tracking, payment_status) 
                         VALUES ('{$temp_data['name']}', '{$temp_data['address']}', '{$temp_data['phone']}', 
                                '{$temp_data['email']}', '{$temp_data['problem']}', '{$temp_data['description']}', '$tracking', 'PENDING')";
